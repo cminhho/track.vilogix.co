@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { PublicLayout } from './components/SiteChrome'
 import { HomePage } from './pages/HomePage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { TrackingPage } from './pages/TrackingPage'
 import { DEMO_PORTAL_ENABLED } from './site'
 
 const DemoPortalEntry = DEMO_PORTAL_ENABLED
@@ -14,6 +15,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<PublicLayout />}>
         <Route index element={<HomePage />} />
+        <Route path="track/:trackingNumber" element={<TrackingPage />} />
         {!DemoPortalEntry && <Route path="*" element={<NotFoundPage />} />}
       </Route>
       {DemoPortalEntry && (

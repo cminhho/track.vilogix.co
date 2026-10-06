@@ -28,7 +28,7 @@ const llms = `# VI LOGIX Shipment Tracking
 
 > Public shipment status lookup for VI LOGIX orders.
 
-Use a VI LOGIX tracking number to view the current status, estimated delivery, route progress, customs checkpoint and shipment activity. Public results exclude recipient contact details, addresses and shipment charges.
+Enter a VI LOGIX tracking number to open an approved embedded tracking view. Invalid, malformed and unapproved numbers do not load the carrier website.
 
 ## Public pages
 

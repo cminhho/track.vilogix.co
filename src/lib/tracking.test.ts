@@ -36,7 +36,23 @@ describe('public tracking', () => {
     expect(result.record).not.toHaveProperty('recipientName')
     expect(result.record).not.toHaveProperty('recipientPhone')
     expect(result.record).not.toHaveProperty('recipientAddress')
-    expect(result.record.events.every((event) => !('createdBy' in event))).toBe(true)
+    if (!('kind' in result.record)) expect(result.record.events.every((event) => !('createdBy' in event))).toBe(true)
+  })
+
+  it('returns the embedded partner record without recipient identity', async () => {
+    const result = await lookupTrackingNumber('idb20264384')
+    expect(result.kind).toBe('found')
+    if (result.kind !== 'found') return
+    expect(result.record).toMatchObject({
+      kind: 'embedded',
+      trackingNumber: 'IDB20264384',
+      destinationCountry: 'United Kingdom',
+      shippingRoute: 'Air',
+      packages: 1,
+      embedUrl: 'https://track.tadiexpress.com/?b=IDB20264384',
+      embedState: 'unavailable',
+    })
+    expect(result.record).not.toHaveProperty('recipientName')
   })
 
   it('normalizes the number before calling a replaceable data source', async () => {

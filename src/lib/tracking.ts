@@ -1,5 +1,5 @@
-import { DEMO_TRACKING_RECORDS } from '../data/trackingDemo'
-import type { PublicTrackingStatus, TrackingDataSource, TrackingLocale, TrackingLookupResult } from '../types/tracking'
+import { DEMO_TRACKING_RECORDS, EMBEDDED_TRACKING_RECORDS } from '../data/trackingDemo'
+import type { EmbeddedTrackingRecord, PublicTrackingStatus, TrackingDataSource, TrackingLocale, TrackingLookupResult, TrackingRecord } from '../types/tracking'
 
 export const TRACKING_NUMBER_PATTERN = /^[A-Z0-9-]{6,40}$/
 
@@ -26,6 +26,9 @@ export const TRACKING_PROGRESS_STEPS: readonly PublicTrackingStatus[] = [
 
 export const normalizeTrackingNumber = (value: string) => value.trim().toUpperCase()
 
+export const isEmbeddedTrackingRecord = (record: TrackingRecord): record is EmbeddedTrackingRecord =>
+  'kind' in record && record.kind === 'embedded'
+
 export const buildTrackingShareUrl = (trackingNumber: string, origin: string, locale?: TrackingLocale) => {
   const url = new URL('/', origin)
   url.searchParams.set('tracking', normalizeTrackingNumber(trackingNumber))
@@ -42,7 +45,7 @@ export const validateTrackingNumber = (value: string) => {
   return ''
 }
 
-const demoRecords = new Map(DEMO_TRACKING_RECORDS.map((record) => [record.trackingNumber, record]))
+const demoRecords = new Map([...DEMO_TRACKING_RECORDS, ...EMBEDDED_TRACKING_RECORDS].map((record) => [record.trackingNumber, record]))
 
 export const demoTrackingDataSource: TrackingDataSource = {
   async lookup(trackingNumber): Promise<TrackingLookupResult> {
@@ -51,6 +54,7 @@ export const demoTrackingDataSource: TrackingDataSource = {
     const record = demoRecords.get(normalizeTrackingNumber(trackingNumber))
     if (!record) return { kind: 'not_found' }
     const publicRecord = structuredClone(record)
+    if (isEmbeddedTrackingRecord(publicRecord)) return { kind: 'found', record: publicRecord }
     const demoInteractionsEnabled = import.meta.env.DEV || import.meta.env.MODE === 'test'
     if (!demoInteractionsEnabled) {
       publicRecord.capabilities = {

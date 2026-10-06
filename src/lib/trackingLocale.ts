@@ -44,6 +44,21 @@ interface TrackingCopy {
     actionMessage: string
   }
   activity: { eyebrow: string; latest: string; latestBadge: string; earlier: string; update: string; updates: string }
+  embedded: {
+    eyebrow: string
+    title: string
+    billCreated: string
+    company: string
+    destination: string
+    route: string
+    packages: string
+    liveDetails: string
+    sourceNote: string
+    loading: string
+    unavailableTitle: string
+    unavailableDescription: string
+    retry: string
+  }
   feedback: {
     lookingFor: string
     shipmentFound: string
@@ -86,6 +101,12 @@ export const TRACKING_COPY: Record<TrackingLocale, TrackingCopy> = {
       clearedMessage: 'Destination customs clearance has been completed.', actionMessage: 'Additional information or action is required before the shipment can continue.',
     },
     activity: { eyebrow: 'Shipment activity', latest: 'Latest update', latestBadge: 'Latest', earlier: 'View earlier updates', update: 'update', updates: 'updates' },
+    embedded: {
+      eyebrow: 'Partner tracking', title: 'Shipment details', billCreated: 'Bill created', company: 'Company', destination: 'Destination',
+      route: 'Shipping route', packages: 'Packages', liveDetails: 'Live tracking details',
+      sourceNote: 'This view is loaded from the shipping partner. If it is temporarily unavailable, try again later.', loading: 'Loading tracking details…',
+      unavailableTitle: 'Partner tracking is temporarily unavailable', unavailableDescription: 'The supplied tracking page currently returns an error. Your bill information remains available above.', retry: 'Retry live tracking',
+    },
     feedback: {
       lookingFor: 'Looking for', shipmentFound: 'Shipment found. Current status:', noShipment: 'No shipment found', checkNumber: 'Check the tracking number and try again.',
       notFoundPrefix: 'We could not find', editNumber: 'Edit tracking number', contactSupport: 'Contact support', unavailable: 'Tracking unavailable',
@@ -118,6 +139,12 @@ export const TRACKING_COPY: Record<TrackingLocale, TrackingCopy> = {
       clearedMessage: 'Vận đơn đã hoàn tất thông quan tại điểm nhận.', actionMessage: 'Cần bổ sung thông tin hoặc thực hiện yêu cầu trước khi vận đơn có thể tiếp tục.',
     },
     activity: { eyebrow: 'Hành trình vận đơn', latest: 'Cập nhật mới nhất', latestBadge: 'Mới nhất', earlier: 'Xem cập nhật trước', update: 'cập nhật', updates: 'cập nhật' },
+    embedded: {
+      eyebrow: 'Tracking đối tác', title: 'Chi tiết vận đơn', billCreated: 'Ngày tạo bill', company: 'Đơn vị', destination: 'Điểm đến',
+      route: 'Hình thức vận chuyển', packages: 'Số kiện', liveDetails: 'Chi tiết tracking trực tiếp',
+      sourceNote: 'Nội dung này được tải từ hệ thống của đối tác vận chuyển. Nếu tạm thời không khả dụng, vui lòng thử lại sau.', loading: 'Đang tải chi tiết tracking…',
+      unavailableTitle: 'Tracking đối tác đang tạm thời không khả dụng', unavailableDescription: 'Trang tracking được cung cấp hiện đang trả về lỗi. Thông tin bill vẫn được hiển thị ở phía trên.', retry: 'Thử tải tracking trực tiếp',
+    },
     feedback: {
       lookingFor: 'Đang tìm', shipmentFound: 'Đã tìm thấy vận đơn. Trạng thái hiện tại:', noShipment: 'Không tìm thấy vận đơn', checkNumber: 'Kiểm tra mã vận đơn và thử lại.',
       notFoundPrefix: 'Không tìm thấy', editNumber: 'Sửa mã vận đơn', contactSupport: 'Liên hệ hỗ trợ', unavailable: 'Không thể tra cứu',

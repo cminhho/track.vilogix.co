@@ -1,4 +1,4 @@
-import type { PublicTrackingRecord } from '../types/tracking'
+import type { EmbeddedTrackingRecord, PublicTrackingRecord } from '../types/tracking'
 
 export const DEMO_TRACKING_NUMBER = 'VIE-260927-001'
 
@@ -84,5 +84,22 @@ export const DEMO_TRACKING_RECORDS: readonly PublicTrackingRecord[] = [
         occurredAt: '2026-09-30T02:15:00.000Z',
       },
     ],
+  },
+]
+
+export const EMBEDDED_TRACKING_RECORDS: readonly EmbeddedTrackingRecord[] = [
+  {
+    kind: 'embedded',
+    trackingNumber: 'IDB20264384',
+    createdOn: '2026-08-21',
+    company: 'Tadi Express',
+    destinationCountry: 'United Kingdom',
+    destinationCountryVi: 'Vương quốc Anh',
+    shippingRoute: 'Air',
+    shippingRouteVi: 'Đường hàng không',
+    packages: 1,
+    status: 'in_transit',
+    embedUrl: 'https://track.tadiexpress.com/?b=IDB20264384',
+    embedState: 'unavailable',
   },
 ]

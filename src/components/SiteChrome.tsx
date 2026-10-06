@@ -24,6 +24,7 @@ function TrackingFooter() {
 
 export function PublicLayout() {
   const location = useLocation()
+  const isTrackingPage = location.pathname.startsWith('/track/')
   const locale = useTrackingLocale(location.pathname === '/' ? location.search : '')
   const copy = TRACKING_COPY[locale]
 
@@ -32,11 +33,11 @@ export function PublicLayout() {
   }, [location.pathname])
 
   return (
-    <div className="site-shell">
+    <div className={`site-shell${isTrackingPage ? ' tracking-page-shell' : ''}`}>
       <a href="#main-content" className="skip-link">{copy.skipToContent}</a>
       <TrackingHeader />
       <main id="main-content" className="site-main"><Outlet /></main>
-      <TrackingFooter />
+      {!isTrackingPage && <TrackingFooter />}
     </div>
   )
 }

@@ -81,8 +81,25 @@ export interface PublicTrackingRecord {
   events: PublicTrackingEvent[]
 }
 
+export interface EmbeddedTrackingRecord {
+  kind: 'embedded'
+  trackingNumber: string
+  createdOn: string
+  company: string
+  destinationCountry: string
+  destinationCountryVi?: string
+  shippingRoute: string
+  shippingRouteVi?: string
+  packages: number
+  status: PublicTrackingStatus
+  embedUrl: string
+  embedState: 'available' | 'unavailable'
+}
+
+export type TrackingRecord = PublicTrackingRecord | EmbeddedTrackingRecord
+
 export type TrackingLookupResult =
-  | { kind: 'found'; record: PublicTrackingRecord }
+  | { kind: 'found'; record: TrackingRecord }
   | { kind: 'not_found' }
 
 export interface TrackingDataSource {

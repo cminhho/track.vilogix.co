@@ -33,6 +33,9 @@ for (const page of PUBLIC_PAGES) {
   const routeHtml = page.path === '/'
     ? html
     : await readFile(resolve(dist, page.path.slice(1), 'index.html'), 'utf8')
+  const rootStart = routeHtml.indexOf('<div id="root">')
+  const rootEnd = routeHtml.indexOf('<script type="module"', rootStart)
+  const renderedRoot = routeHtml.slice(rootStart, rootEnd)
 
   requireText(sitemap, `<loc>${canonicalUrl}</loc>`, 'Sitemap route')
   requireText(llms, `](${canonicalUrl})`, 'llms.txt route')
@@ -91,9 +94,6 @@ for (const page of PUBLIC_PAGES) {
     if (!Array.isArray(faqPage?.mainEntity) || faqPage.mainEntity.length !== expectedQuestions) {
       throw new Error(`${page.path} FAQPage must contain exactly ${expectedQuestions} questions`)
     }
-    const rootStart = routeHtml.indexOf('<div id="root">')
-    const rootEnd = routeHtml.indexOf('<script type="module"', rootStart)
-    const renderedRoot = routeHtml.slice(rootStart, rootEnd)
     for (const item of faqPage.mainEntity) {
       if (item?.['@type'] !== 'Question' || item.acceptedAnswer?.['@type'] !== 'Answer') {
         throw new Error(`${page.path} FAQPage contains an invalid question or answer`)
@@ -103,9 +103,9 @@ for (const page of PUBLIC_PAGES) {
     }
   }
   for (const unsupportedCarrier of ['DHL', 'FedEx', 'Vietnam Post', 'Vietnam Airlines Cargo', 'VNPT', 'Viettel Post']) {
-    if (routeHtml.includes(unsupportedCarrier)) throw new Error(`${page.path} contains unsupported public carrier claim: ${unsupportedCarrier}`)
+    if (renderedRoot.includes(unsupportedCarrier)) throw new Error(`${page.path} contains unsupported public carrier claim: ${unsupportedCarrier}`)
   }
-  if (/\b\d+\s*[–-]\s*\d+\s*(?:business\s+)?days\b/i.test(routeHtml)) {
+  if (/\b\d+\s*[–-]\s*\d+\s*(?:business\s+)?days\b/i.test(renderedRoot)) {
     throw new Error(`${page.path} contains an unsupported fixed transit-time range`)
   }
   for (const forbiddenType of ['AggregateRating', 'Review']) {
@@ -130,10 +130,11 @@ for (const forbidden of ['demo123', 'nhanvien@viexpress.vn', 'doitac@viexpress.v
   if (javascript.includes(forbidden)) throw new Error(`Production bundle contains forbidden demo or unverified contact data: ${forbidden}`)
 }
 if (javascript.includes('Vietnam fulfillment operations')) throw new Error('Production bundle contains a stock-photo caption that implies VI LOGIX operations')
-requireText(javascript, 'Copy tracking link', 'Tracking share action')
-requireText(javascript, 'Estimated delivery', 'Tracking ETA guidance')
-requireText(javascript, 'Customs clearance', 'International clearance checkpoint')
-requireText(javascript, 'Theo dõi vận đơn', 'Vietnamese tracking locale')
+requireText(javascript, 'Track your shipment.', 'Lean tracking homepage')
+requireText(javascript, 'track/:trackingNumber', 'Dedicated tracking route')
+requireText(javascript, 'IDB20264384', 'Configured embedded tracking bill')
+requireText(javascript, 'https://track.tadiexpress.com/?b=', 'Embedded tracking source URL')
+if (javascript.includes('Simone Ku')) throw new Error('Production bundle exposes consignee identity')
 if (javascript.includes('+84 94 346 6897')) throw new Error('Production bundle contains the formatted WhatsApp number as display text')
 
 console.log('Release smoke checks passed.')

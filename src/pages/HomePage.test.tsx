@@ -1,80 +1,74 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
-import { BrowserRouter, MemoryRouter } from 'react-router-dom'
-import { DEMO_TRACKING_NUMBER } from '../data/trackingDemo'
+import { afterEach, describe, expect, it } from 'vitest'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { HomePage } from './HomePage'
+import { TrackingPage } from './TrackingPage'
 
-afterEach(() => {
-  cleanup()
-  window.history.replaceState({}, '', '/')
-  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined })
-})
+afterEach(cleanup)
 
-describe('tracking homepage', () => {
+const renderTrackingRoutes = (initialEntry = '/') => render(
+  <MemoryRouter initialEntries={[initialEntry]}>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/track/:trackingNumber" element={<TrackingPage />} />
+    </Routes>
+  </MemoryRouter>,
+)
+
+describe('lean tracking flow', () => {
   it('keeps validation feedback connected to the tracking field', () => {
-    render(<MemoryRouter><HomePage /></MemoryRouter>)
-    fireEvent.click(screen.getByRole('button', { name: /^track$/i }))
+    renderTrackingRoutes()
+    fireEvent.click(screen.getByRole('button', { name: /track shipment/i }))
+
     const input = screen.getByRole('textbox', { name: /tracking number/i })
     expect(input.getAttribute('aria-invalid')).toBe('true')
     expect(input.getAttribute('aria-describedby')).toBe('tracking-number-error')
     expect(screen.getByRole('alert').textContent).toBe('Enter a tracking number.')
   })
 
-  it('writes a shareable query and renders a privacy-safe shipment result', async () => {
-    window.history.replaceState({}, '', '/')
-    render(<BrowserRouter><HomePage /></BrowserRouter>)
-    fireEvent.change(screen.getByRole('textbox', { name: /tracking number/i }), { target: { value: DEMO_TRACKING_NUMBER.toLowerCase() } })
-    fireEvent.click(screen.getByRole('button', { name: /^track$/i }))
-    expect(await screen.findByRole('heading', { name: 'In transit' })).toBeTruthy()
-    expect(screen.getAllByText(DEMO_TRACKING_NUMBER).length).toBeGreaterThan(0)
-    expect(screen.getByText('In international transit')).toBeTruthy()
-    expect(document.location.pathname).toBe('/')
-    expect(document.location.search).toBe(`?tracking=${DEMO_TRACKING_NUMBER}&lang=en`)
-    expect(document.body.textContent).not.toContain('recipientPhone')
-    expect(screen.queryByText('Get shipment updates')).toBeNull()
-    expect(screen.queryByText('Shipment references')).toBeNull()
-    expect(screen.queryByText('Shipment documents')).toBeNull()
+  it('opens the dedicated tracking page and embeds the supplied bill', () => {
+    renderTrackingRoutes()
+    fireEvent.change(screen.getByRole('textbox', { name: /tracking number/i }), {
+      target: { value: 'idb20264384' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /track shipment/i }))
+
+    expect(screen.getByRole('heading', { name: 'Shipment tracking' })).toBeTruthy()
+    expect(screen.queryByText('Track another shipment')).toBeNull()
+    expect(screen.queryByText('Tracking details')).toBeNull()
+    expect(screen.queryByText('Tracking number')).toBeNull()
+    expect(screen.queryByText('IDB20264384')).toBeNull()
+    const frame = screen.getByTitle('Tracking details — IDB20264384') as HTMLIFrameElement
+    expect(frame.src).toBe('https://track.tadiexpress.com/?b=IDB20264384')
   })
 
-  it('automatically looks up a tracking number from a shared link', async () => {
-    window.history.replaceState({}, '', `/?tracking=${DEMO_TRACKING_NUMBER}`)
-    render(<BrowserRouter><HomePage /></BrowserRouter>)
-    expect(await screen.findByRole('heading', { name: 'In transit' })).toBeTruthy()
-    expect((screen.getByRole('textbox', { name: /tracking number/i }) as HTMLInputElement).value).toBe(DEMO_TRACKING_NUMBER)
+  it('renders a direct tracking URL without exposing the code in page metadata', () => {
+    renderTrackingRoutes('/track/IDB20264384')
+    expect(screen.getByTitle('Tracking details — IDB20264384')).toBeTruthy()
+    expect(document.title).toBe('Shipment Tracking | VI LOGIX')
   })
 
-  it('copies the customer tracking link from a shipment result', async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined)
-    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
-    window.history.replaceState({}, '', `/?tracking=${DEMO_TRACKING_NUMBER}`)
-    render(<BrowserRouter><HomePage /></BrowserRouter>)
-    await screen.findByRole('heading', { name: 'In transit' })
-    fireEvent.click(screen.getByRole('button', { name: /copy tracking link/i }))
-    expect(await screen.findByRole('button', { name: /link copied/i })).toBeTruthy()
-    expect(writeText).toHaveBeenCalledWith(`http://localhost:3000/?tracking=${DEMO_TRACKING_NUMBER}&lang=en`)
+  it('rejects a malformed direct tracking URL without creating an iframe', () => {
+    renderTrackingRoutes('/track/no')
+    expect(screen.getByRole('heading', { name: 'Tracking number not found.' })).toBeTruthy()
+    expect(screen.queryByTitle(/tracking details/i)).toBeNull()
   })
 
-  it('prioritizes an estimated delivery window and the customs checkpoint', async () => {
-    window.history.replaceState({}, '', `/?tracking=${DEMO_TRACKING_NUMBER}`)
-    render(<BrowserRouter><HomePage /></BrowserRouter>)
-    await screen.findByRole('heading', { name: 'In transit' })
-    expect(screen.getByText('Estimated delivery')).toBeTruthy()
-    expect(screen.getByText((_, element) => element?.tagName === 'STRONG' && Boolean(element.textContent?.includes('Oct')) && Boolean(element.textContent?.includes('2026')))).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Customs clearance' })).toBeTruthy()
-    expect(screen.getAllByText('Pending').length).toBeGreaterThan(0)
+  it('rejects an unapproved IDB number without loading the TADI domain', () => {
+    renderTrackingRoutes('/track/IDB2026XXXX')
+    expect(screen.getByRole('heading', { name: 'Tracking number not found.' })).toBeTruthy()
+    expect(document.querySelector('iframe')).toBeNull()
   })
 
-  it('keeps the selected Vietnamese locale in the URL and copied tracking link', async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined)
-    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
-    window.history.replaceState({}, '', `/?tracking=${DEMO_TRACKING_NUMBER}`)
-    render(<BrowserRouter><HomePage /></BrowserRouter>)
-    await screen.findByRole('heading', { name: 'In transit' })
-    fireEvent.click(screen.getByRole('button', { name: 'VI' }))
-    expect(await screen.findByRole('heading', { name: 'Đang vận chuyển' })).toBeTruthy()
-    expect(document.location.search).toContain('lang=vi')
-    fireEvent.click(screen.getByRole('button', { name: /sao chép link theo dõi/i }))
-    expect(writeText).toHaveBeenCalledWith(`http://localhost:3000/?tracking=${DEMO_TRACKING_NUMBER}&lang=vi`)
-  })
+  it('keeps an unknown well-formed number on the homepage with an inline error', () => {
+    renderTrackingRoutes()
+    fireEvent.change(screen.getByRole('textbox', { name: /tracking number/i }), {
+      target: { value: 'IDB20269999' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /track shipment/i }))
 
+    expect(screen.getByRole('alert').textContent).toBe('Tracking number not found. Check the number and try again.')
+    expect(document.querySelector('iframe')).toBeNull()
+    expect(screen.getByRole('heading', { name: 'Track your shipment.' })).toBeTruthy()
+  })
 })

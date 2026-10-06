@@ -6,15 +6,16 @@ Public React/Vite utility for looking up a VI LOGIX order or shipment by trackin
 
 The only indexable public route is `/`. It provides:
 
-- Tracking-number lookup and shareable `?tracking=...&lang=...` links.
-- Current status and record-sourced delivery estimate.
-- Origin, destination and shipment progress.
-- Customs checkpoint and shipment activity history.
-- Vietnamese and English display.
+- A lean tracking-number lookup form.
+- Inline validation for empty, malformed and unapproved tracking numbers.
+- A noindex `/track/:trackingNumber` route for approved embedded tracking views.
+- A full-width embedded carrier view with the carrier header cropped from the visible viewport.
 
 Unknown public routes render a noindex 404. Marketing pages, quote forms, notification subscriptions, carrier references and document access are not part of this public surface.
 
-Public results must not expose recipient contact details, addresses, shipment charges or internal operators. Delivery estimates must come from the tracking record or production API, never browser inference.
+The app never constructs a carrier URL from unchecked user input. Only tracking numbers with an exact URL in `src/config/trackingEmbeds.ts` can create an iframe. The current approved mapping is `IDB20264384` → `https://track.tadiexpress.com/?b=IDB20264384`; all other values render a local not-found state without contacting TADI Express.
+
+The iframe is cross-origin. VI LOGIX cannot edit fields inside the embedded carrier page, which may show shipment and recipient details supplied by the carrier.
 
 ## Local development
 
@@ -29,7 +30,7 @@ Full validation:
 npm run verify
 ```
 
-The current lookup uses a privacy-safe development record. Replace the data-source adapter when the production tracking API is available; do not connect the public page directly to portal `localStorage`.
+Add a tracking number only after its complete carrier URL has been verified, then update the allowlist and its tests together.
 
 ## Production build
 
