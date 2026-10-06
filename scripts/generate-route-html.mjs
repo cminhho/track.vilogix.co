@@ -100,18 +100,17 @@ const buildStructuredData = (page) => {
 }
 
 const buildHtml = (page) => {
-  const canonicalUrl = `${siteUrl}${page.path === '/' ? '/' : page.path}`
   const ogType = page.kind === 'article' ? 'article' : 'website'
   const renderedApp = render(page.path)
-  const jsonLd = JSON.stringify(buildStructuredData(page)).replaceAll('<', '\\u003c')
 
   let html = template
     .replace(/<title>[^<]*<\/title>/, `<title>${escapeAttribute(page.title)}</title>`)
-    .replace(/<link rel="canonical" href="[^"]*"\s*\/>/, `<link rel="canonical" href="${escapeAttribute(canonicalUrl)}" />`)
+    .replace(/<link rel="canonical" href="[^"]*"\s*\/?>/, '')
+    .replace(/<meta property="og:url" content="[^"]*"\s*\/?>/, '')
     .replace('<div id="root"></div>', `<div id="root">${renderedApp}</div>`)
 
   html = replaceNamedMeta(html, 'description', page.description)
-  html = replaceNamedMeta(html, 'robots', 'index, follow, max-image-preview:large')
+  html = replaceNamedMeta(html, 'robots', 'noindex, nofollow, noarchive, nosnippet, noimageindex')
   html = replaceNamedMeta(html, 'twitter:card', 'summary_large_image')
   html = replaceNamedMeta(html, 'twitter:title', page.title)
   html = replaceNamedMeta(html, 'twitter:description', page.description)
@@ -120,10 +119,8 @@ const buildHtml = (page) => {
   html = replacePropertyMeta(html, 'og:type', ogType)
   html = replacePropertyMeta(html, 'og:title', page.title)
   html = replacePropertyMeta(html, 'og:description', page.description)
-  html = replacePropertyMeta(html, 'og:url', canonicalUrl)
   html = replacePropertyMeta(html, 'og:image', socialImage)
   html = replacePropertyMeta(html, 'og:image:alt', socialImageAlt)
-  html = html.replace('</head>', `    <script id="page-structured-data" type="application/ld+json">${jsonLd}</script>\n  </head>`)
 
   return html
 }
@@ -151,4 +148,4 @@ await writeFile(resolve(distDirectory, '404.html'), notFoundHtml)
 
 await rm(serverDirectory, { recursive: true, force: true })
 
-console.log(`Generated static HTML for ${PUBLIC_PAGES.length} indexable routes plus 404.html.`)
+console.log(`Generated static HTML for ${PUBLIC_PAGES.length} private routes plus 404.html.`)

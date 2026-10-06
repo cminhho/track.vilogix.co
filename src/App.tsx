@@ -15,7 +15,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<PublicLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="track/:trackingNumber" element={<TrackingPage />} />
+        <Route path=":trackingNumber" element={<TrackingPage />} />
         {!DemoPortalEntry && <Route path="*" element={<NotFoundPage />} />}
       </Route>
       {DemoPortalEntry && (

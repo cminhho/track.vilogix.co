@@ -2,7 +2,7 @@ import { ArrowRight, PackageSearch } from 'lucide-react'
 import { type FormEvent, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PageMeta } from '../components/PageMeta'
-import { getApprovedTrackingEmbedUrl, hasValidTrackingNumberFormat, normalizeTrackingNumber } from '../config/trackingEmbeds'
+import { hasValidTrackingNumberFormat, normalizeTrackingNumber } from '../config/trackingEmbeds'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -26,13 +26,7 @@ export function HomePage() {
       return
     }
 
-    if (!getApprovedTrackingEmbedUrl(normalized)) {
-      setError('Tracking number not found. Check the number and try again.')
-      inputRef.current?.focus()
-      return
-    }
-
-    navigate(`/track/${encodeURIComponent(normalized)}`)
+    navigate(`/${encodeURIComponent(normalized)}`)
   }
 
   return (
@@ -40,12 +34,9 @@ export function HomePage() {
       <PageMeta
         title="Track Your Shipment | VI LOGIX"
         description="Enter your tracking number to view the latest shipment updates."
+        noIndex
         path="/"
         lang="en"
-        webApplication={{
-          name: 'VI LOGIX Shipment Tracking',
-          description: 'A focused shipment tracking lookup for VI LOGIX customers.',
-        }}
       />
 
       <section className="lean-tracking-home" aria-labelledby="tracking-page-title">

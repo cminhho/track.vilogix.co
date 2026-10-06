@@ -4,18 +4,21 @@ Public React/Vite utility for looking up a VI LOGIX order or shipment by trackin
 
 ## Public scope
 
-The only indexable public route is `/`. It provides:
+The root route `/` provides:
 
 - A lean tracking-number lookup form.
-- Inline validation for empty, malformed and unapproved tracking numbers.
-- A noindex `/track/:trackingNumber` route for approved embedded tracking views.
+- Inline validation for empty or malformed tracking numbers.
+- A noindex `/:trackingNumber` route for tracking numbers matching `IDB2026` plus four digits.
 - A full-width embedded carrier view with the carrier header cropped from the visible viewport.
+
+The entire site is private to crawlers: every route emits `noindex, nofollow, noarchive, nosnippet, noimageindex`, `robots.txt` disallows `/`, Vercel sends the matching `X-Robots-Tag`, and the build publishes neither a sitemap nor `llms.txt`.
 
 Unknown public routes render a noindex 404. Marketing pages, quote forms, notification subscriptions, carrier references and document access are not part of this public surface.
 
-The app never constructs a carrier URL from unchecked user input. Only tracking numbers with an exact URL in `src/config/trackingEmbeds.ts` can create an iframe. The current approved mapping is `IDB20264384` → `https://track.tadiexpress.com/?b=IDB20264384`; all other values render a local not-found state without contacting TADI Express.
+The app constructs a carrier URL only after the normalized input matches `^IDB2026\d{4}$`. For example, `IDB20264384` becomes `https://track.tadiexpress.com/?b=IDB20264384`; missing values, literal placeholders such as `IDB2026XXXX`, and numbers outside that pattern render a local not-found state without contacting TADI Express.
 
 The iframe is cross-origin. VI LOGIX cannot edit fields inside the embedded carrier page, which may show shipment and recipient details supplied by the carrier.
+
 
 ## Local development
 
@@ -30,7 +33,7 @@ Full validation:
 npm run verify
 ```
 
-Add a tracking number only after its complete carrier URL has been verified, then update the allowlist and its tests together.
+Update the shared pattern and its tests together if TADI Express introduces another tracking-number series.
 
 ## Production build
 

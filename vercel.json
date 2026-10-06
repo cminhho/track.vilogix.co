@@ -2,7 +2,15 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet, noimageindex" }
+      ]
+    }
+  ],
   "rewrites": [
-    { "source": "/track/:trackingNumber", "destination": "/index.html" }
+    { "source": "/:trackingNumber(IDB2026\\d{4})", "destination": "/index.html" }
   ]
 }

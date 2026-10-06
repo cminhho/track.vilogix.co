@@ -1,12 +1,12 @@
 import { ArrowLeft, PackageSearch } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { PageMeta } from '../components/PageMeta'
-import { getApprovedTrackingEmbedUrl, normalizeTrackingNumber } from '../config/trackingEmbeds'
+import { getTrackingEmbedUrl, normalizeTrackingNumber } from '../config/trackingEmbeds'
 
 export function TrackingPage() {
   const params = useParams<{ trackingNumber: string }>()
   const trackingNumber = normalizeTrackingNumber(params.trackingNumber ?? '')
-  const embeddedUrl = getApprovedTrackingEmbedUrl(trackingNumber)
+  const embeddedUrl = getTrackingEmbedUrl(trackingNumber)
 
   return (
     <>
@@ -14,7 +14,7 @@ export function TrackingPage() {
         title="Shipment Tracking | VI LOGIX"
         description="View the latest tracking updates for your shipment."
         noIndex
-        path={embeddedUrl ? `/track/${trackingNumber}` : '/track'}
+        path={embeddedUrl ? `/${trackingNumber}` : '/'}
         lang="en"
       />
 
