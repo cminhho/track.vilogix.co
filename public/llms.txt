@@ -1,0 +1,14 @@
+# VI LOGIX Shipment Tracking
+
+> Public shipment status lookup for VI LOGIX orders.
+
+Use a VI LOGIX tracking number to view the current status, estimated delivery, route progress, customs checkpoint and shipment activity. Public results exclude recipient contact details, addresses and shipment charges.
+
+## Public pages
+
+- [Track Your Shipment | VI LOGIX](https://track.vilogx.co/): Track a VI LOGIX shipment from Vietnam-side receiving and preparation through international transit and delivery updates.
+
+## Discovery
+
+- [Sitemap](https://track.vilogx.co/sitemap.xml)
+- [Robots](https://track.vilogx.co/robots.txt)
