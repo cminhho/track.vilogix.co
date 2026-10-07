@@ -16,5 +16,3 @@ export const PUBLIC_VI_MADE_URL = configuredViMadeUrl || 'https://vimade-site.ve
 export const PUBLIC_CONTACT_EMAIL = 'hello@vilogix.com'
 export const PUBLIC_CONTACT_ACTION_LABEL = 'Get a Quote'
 export const buildWhatsAppUrl = (message: string) => `https://wa.me/${PUBLIC_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
-
-export const DEMO_PORTAL_ENABLED = import.meta.env.DEV || import.meta.env.VITE_ENABLE_DEMO_PORTAL === 'true'

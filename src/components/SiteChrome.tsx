@@ -24,7 +24,7 @@ function TrackingFooter() {
 
 export function PublicLayout() {
   const location = useLocation()
-  const isTrackingPage = /^\/IDB2026\d{4}$/.test(location.pathname)
+  const isTrackingPage = /^\/(?:TDE\/IDB2026\d{4}|VAE\/\d{7})\/?$/i.test(location.pathname)
   const locale = useTrackingLocale(location.pathname === '/' ? location.search : '')
   const copy = TRACKING_COPY[locale]
 

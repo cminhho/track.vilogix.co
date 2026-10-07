@@ -74,7 +74,8 @@ for (const page of PUBLIC_PAGES) {
   }
 }
 
-requireText(vercelConfig, '"source": "/:trackingNumber(IDB2026\\\\d{4})"', 'Pattern-scoped tracking route rewrite')
+requireText(vercelConfig, '"source": "/TDE/:trackingNumber(IDB2026\\\\d{4})"', 'TADI tracking route rewrite')
+requireText(vercelConfig, '"source": "/VAE/:trackingNumber(\\\\d{7})"', 'Viet An tracking route rewrite')
 requireText(vercelConfig, '"destination": "/index.html"', 'Tracking route destination')
 if (vercelConfig.includes('/track/:trackingNumber')) throw new Error('Legacy tracking route must not be configured')
 if (vercelConfig.includes('"redirects"')) throw new Error('Tracking site must not configure redirects')
@@ -89,9 +90,11 @@ for (const forbidden of ['demo123', 'nhanvien@viexpress.vn', 'doitac@viexpress.v
 }
 if (javascript.includes('Vietnam fulfillment operations')) throw new Error('Production bundle contains a stock-photo caption that implies VI LOGIX operations')
 requireText(javascript, 'Track your shipment.', 'Lean tracking homepage')
-requireText(javascript, ':trackingNumber', 'Dedicated tracking route')
-requireText(javascript, 'IDB20264384', 'Configured tracking example')
+requireText(javascript, 'TDE/:trackingNumber', 'TADI tracking page route')
+requireText(javascript, 'VAE/:trackingNumber', 'Viet An tracking page route')
+requireText(javascript, 'IDB2026', 'Configured TADI tracking pattern')
 requireText(javascript, 'https://track.tadiexpress.com/', 'Embedded tracking source origin')
+requireText(javascript, 'https://vietanexpress.com.vn/TrackingResult.aspx', 'Embedded Viet An source origin')
 if (javascript.includes('Simone Ku')) throw new Error('Production bundle exposes consignee identity')
 if (javascript.includes('+84 94 346 6897')) throw new Error('Production bundle contains the formatted WhatsApp number as display text')
 

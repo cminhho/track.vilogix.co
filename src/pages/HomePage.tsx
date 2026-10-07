@@ -2,7 +2,7 @@ import { ArrowRight, PackageSearch } from 'lucide-react'
 import { type FormEvent, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PageMeta } from '../components/PageMeta'
-import { hasValidTrackingNumberFormat, normalizeTrackingNumber } from '../config/trackingEmbeds'
+import { parseTrackingInput } from '../config/trackingEmbeds'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -12,7 +12,7 @@ export function HomePage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const normalized = normalizeTrackingNumber(trackingNumber)
+    const normalized = trackingNumber.trim().toUpperCase()
 
     if (!normalized) {
       setError('Enter a tracking number.')
@@ -20,13 +20,14 @@ export function HomePage() {
       return
     }
 
-    if (!hasValidTrackingNumberFormat(normalized)) {
+    const parsed = parseTrackingInput(normalized)
+    if (!parsed) {
       setError('Enter a valid tracking number.')
       inputRef.current?.focus()
       return
     }
 
-    navigate(`/${encodeURIComponent(normalized)}`)
+    navigate(`/${parsed.vendor}/${encodeURIComponent(parsed.trackingNumber)}`)
   }
 
   return (
@@ -58,20 +59,17 @@ export function HomePage() {
                   setTrackingNumber(event.target.value.toUpperCase())
                   setError('')
                 }}
-                placeholder="IDB20264384"
                 autoComplete="off"
                 autoCapitalize="characters"
                 spellCheck={false}
                 aria-invalid={Boolean(error)}
-                aria-describedby={error ? 'tracking-number-error' : 'tracking-number-hint'}
+                aria-describedby={error ? 'tracking-number-error' : undefined}
               />
               <button className="primary-action" type="submit">
                 Track shipment <ArrowRight aria-hidden="true" />
               </button>
             </div>
-            {error
-              ? <p id="tracking-number-error" className="tracking-field-error" role="alert">{error}</p>
-              : <p id="tracking-number-hint" className="tracking-field-hint">Enter the complete number from your shipment confirmation.</p>}
+            {error && <p id="tracking-number-error" className="tracking-field-error" role="alert">{error}</p>}
           </form>
         </div>
       </section>

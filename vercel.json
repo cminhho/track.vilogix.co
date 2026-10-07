@@ -11,6 +11,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/:trackingNumber(IDB2026\\d{4})", "destination": "/index.html" }
+    { "source": "/TDE/:trackingNumber(IDB2026\\d{4})", "destination": "/index.html" },
+    { "source": "/VAE/:trackingNumber(\\d{7})", "destination": "/index.html" }
   ]
 }

@@ -8,14 +8,14 @@ The root route `/` provides:
 
 - A lean tracking-number lookup form.
 - Inline validation for empty or malformed tracking numbers.
-- A noindex `/:trackingNumber` route for tracking numbers matching `IDB2026` plus four digits.
+- Noindex `/TDE/:trackingNumber` and `/VAE/:trackingNumber` routes for supported vendor tracking numbers.
 - A full-width embedded carrier view with the carrier header cropped from the visible viewport.
 
 The entire site is private to crawlers: every route emits `noindex, nofollow, noarchive, nosnippet, noimageindex`, `robots.txt` disallows `/`, Vercel sends the matching `X-Robots-Tag`, and the build publishes neither a sitemap nor `llms.txt`.
 
 Unknown public routes render a noindex 404. Marketing pages, quote forms, notification subscriptions, carrier references and document access are not part of this public surface.
 
-The app constructs a carrier URL only after the normalized input matches `^IDB2026\d{4}$`. For example, `IDB20264384` becomes `https://track.tadiexpress.com/?b=IDB20264384`; missing values, literal placeholders such as `IDB2026XXXX`, and numbers outside that pattern render a local not-found state without contacting TADI Express.
+The lookup accepts a vendor prefix as part of the submitted number. `TDEIDB20264388` opens `/TDE/IDB20264388` and embeds TADI Express; `VAE6172162` opens `/VAE/6172162` and embeds Viet An Express. Each vendor has an allowlisted URL builder and its own validation pattern, so malformed numbers and unknown vendors render a local not-found state without contacting an external tracking site.
 
 The iframe is cross-origin. VI LOGIX cannot edit fields inside the embedded carrier page, which may show shipment and recipient details supplied by the carrier.
 
@@ -33,10 +33,14 @@ Full validation:
 npm run verify
 ```
 
-Update the shared pattern and its tests together if TADI Express introduces another tracking-number series.
+Update the relevant vendor adapter and its tests together if a carrier introduces another tracking-number series.
 
 ## Production build
 
-`npm run build` generates the Vite bundle, a statically rendered homepage, `robots.txt`, a one-route `sitemap.xml`, tracking-focused `llms.txt`, and a noindex `404.html`.
+`npm run build` generates the Vite bundle, a statically rendered homepage, a site-wide blocking `robots.txt`, and a noindex `404.html`. It does not publish a sitemap or `llms.txt`.
 
 Canonical site configuration defaults to `https://track.vilogx.co` and can be overridden with `VITE_PUBLIC_SITE_URL`.
+
+## Tracking mapping
+
+See [VI LOGIX Tracking Mapping Guide](docs/tracking-mapping-guide.md) for vendor prefixes, route ownership, the planned internal mapping contract, security requirements and the checklist for adding another provider.
