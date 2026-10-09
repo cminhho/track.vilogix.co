@@ -161,3 +161,6 @@ export const useTrackingLocale = (search: string) => {
   useEffect(() => setLocale(requestedLocale), [requestedLocale])
   return locale
 }
+
+/** Keep the customer's language when moving between tracking routes. */
+export const withTrackingLang = (path: string, locale: TrackingLocale) => locale === 'vi' ? `${path}?lang=vi` : path

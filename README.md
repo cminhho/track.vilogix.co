@@ -13,7 +13,7 @@ The root route `/` provides:
 
 The entire site is private to crawlers: every route emits `noindex, nofollow, noarchive, nosnippet, noimageindex`, `robots.txt` disallows `/`, Vercel sends the matching `X-Robots-Tag`, and the build publishes neither a sitemap nor `llms.txt`.
 
-Unknown public routes render a noindex 404. Marketing pages, quote forms, notification subscriptions, carrier references and document access are not part of this public surface.
+Unknown public routes render a noindex 404. Marketing pages, quote forms, notification subscriptions, carrier references and document access are not part of this public surface. The only lead path is the header `Get a Quote` link to the main-site contact page (tagged `utm_source=track&utm_medium=header`); the footer adds the website and WhatsApp support links.
 
 The lookup accepts a vendor prefix as part of the submitted number. `TDEIDB20264388` opens `/TDE/IDB20264388` and embeds TADI Express; `VAE6172162` opens `/VAE/6172162` and embeds Viet An Express. Each vendor has an allowlisted URL builder and its own validation pattern, so malformed numbers and unknown vendors render a local not-found state without contacting an external tracking site.
 
@@ -40,6 +40,10 @@ Update the relevant vendor adapter and its tests together if a carrier introduce
 `npm run build` generates the Vite bundle, a statically rendered homepage, a site-wide blocking `robots.txt`, and a noindex `404.html`. It does not publish a sitemap or `llms.txt`.
 
 Canonical site configuration defaults to `https://track.vilogx.co` and can be overridden with `VITE_PUBLIC_SITE_URL`.
+
+## Design system
+
+See [DESIGN.md](DESIGN.md) (tracking intent at the top) and [docs/design-system/tracking.md](docs/design-system/tracking.md). Customer-facing copy for the lean surface, in English and Vietnamese (`?lang=vi`), lives in `src/config/trackingCopy.ts`.
 
 ## Tracking mapping
 

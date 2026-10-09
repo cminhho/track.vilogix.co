@@ -14,6 +14,28 @@ The core rule is simple: the browser may select only a known vendor adapter. A m
 
 Vendor prefixes are technical routing identifiers. They are removed before the vendor tracking number is placed in an embed URL.
 
+## Hướng dẫn sử dụng cho team
+
+Truy cập trang tracking tại [https://track.vilogix.co/](https://track.vilogix.co/), sau đó nhập mã đầy đủ gồm prefix của vendor và vendor tracking code.
+
+### TADI Express
+
+- Vendor tracking code: `IDB20264388`
+- Prefix: `TDE`
+- Input trên trang tracking: `TDEIDB20264388`
+- URL tương ứng: `https://track.vilogix.co/TDE/IDB20264388`
+- Mẫu URL trực tiếp: `https://track.vilogix.co/TDE/{TADI Express code}`
+
+### Việt An Express
+
+- Vendor tracking code: `6172162`
+- Prefix: `VAE`
+- Input trên trang tracking: `VAE6172162`
+- URL tương ứng: `https://track.vilogix.co/VAE/6172162`
+- Mẫu URL trực tiếp: `https://track.vilogix.co/VAE/{Việt An Express code}`
+
+Prefix `TDE` và `VAE` được dùng để xác định vendor khi nhập mã trên trang chủ. Khi tạo URL trực tiếp, đặt prefix ở path vendor và chỉ đặt vendor tracking code ở phần cuối URL; không thêm prefix vào vendor tracking code.
+
 ## Current direct vendor flow
 
 The homepage trims the input, converts it to uppercase, and matches it against the approved patterns.

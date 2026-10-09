@@ -15,6 +15,11 @@
   --primitive-warning: #8a4b08;
   --primitive-danger: #b42318;
   --primitive-danger-soft: #fff1f0;
+  --primitive-public-ink: #17181a;
+  --primitive-public-muted: #62656b;
+  --primitive-public-surface: #f6f6f3;
+  --primitive-public-border: #dedfe2;
+  --primitive-public-inverse: #111214;
 
   --font-family-primary: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   --font-size-xs: .875rem;
@@ -91,12 +96,12 @@
   --color-disabled-fg: var(--primitive-gray);
   --opacity-disabled: .58;
   --spacing-page-x: clamp(1rem, 4vw, 3rem);
-  --spacing-section: clamp(4rem, 8vw, 6rem);
-  --content-width: 75rem;
+  --spacing-section: clamp(3.5rem, 6.5vw, 6rem);
+  --content-width: 76.25rem;
   --reading-width: 42rem;
-  --public-section-gap: clamp(4.5rem, 8vw, 7rem);
+  --public-section-gap: clamp(3.5rem, 6.5vw, 6rem);
   --public-mobile-gutter: 1rem;
-  --public-mobile-section-gap: 4rem;
+  --public-mobile-section-gap: 3.5rem;
   --public-mobile-header-height: 4.5rem;
   --public-mobile-card-peek: 2rem;
   --public-image-overlay: color-mix(in srgb, var(--primitive-navy) 76%, transparent);
@@ -156,6 +161,18 @@
   --public-media-radius: var(--radius-lg);
   --public-section-dark: var(--color-primary);
   --public-section-signal: var(--color-action);
+  --public-heading-size: clamp(2rem, 3.2vw, 2.5rem);
+  --public-heading-line-height: 1.2;
+  --public-copy-line-height: 1.75;
+  --public-card-radius: .5rem;
+  --public-card-shadow: 0 4px 20px rgb(17 18 20 / .05);
+  --public-section-shadow: 0 10px 28px rgb(17 18 20 / .06);
+  --about-section-bg: var(--color-surface);
+  --about-section-border: var(--color-border);
+  --about-proof-bg: var(--color-primary);
+  --about-proof-fg: var(--color-action-foreground);
+  --about-feature-bg: color-mix(in srgb, var(--color-action) 8%, var(--color-surface));
+  --about-heading-size: clamp(2.1rem, 3.65vw, 3rem);
 
   /* Compatibility aliases used by the current application. */
   --navy-950: var(--primitive-navy);

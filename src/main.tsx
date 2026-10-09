@@ -6,6 +6,7 @@ import '@fontsource/be-vietnam-pro/600.css'
 import '@fontsource/be-vietnam-pro/700.css'
 import App from './App'
 import './index.css'
+import './styles/tracking-design.css'
 
 const root = document.getElementById('root')!
 const app = (

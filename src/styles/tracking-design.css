@@ -1,0 +1,351 @@
+/*
+ * Tracking-specific adoption of the canonical vilogix.co public design system.
+ * The shared token source remains tokens.css; this file only maps those tokens
+ * to the smaller tracking product surface.
+ */
+
+.site-shell {
+  --color-primary: var(--primitive-public-ink);
+  --color-primary-dark: var(--primitive-public-ink);
+  --color-primary-hover: color-mix(in srgb, var(--primitive-public-ink) 86%, black);
+  --color-primary-active: var(--primitive-public-inverse);
+  --color-foreground: var(--primitive-public-ink);
+  --color-secondary-foreground: #34363a;
+  --color-muted-foreground: var(--primitive-public-muted);
+  --color-text: var(--primitive-public-ink);
+  --color-muted-text: var(--primitive-public-muted);
+  --color-surface-strong: var(--primitive-public-surface);
+  --color-soft-blue: var(--primitive-public-surface);
+  --color-surface-inverse: var(--primitive-public-inverse);
+  --color-border: var(--primitive-public-border);
+  --color-border-strong: #c9cbd0;
+  --color-focus: var(--primitive-public-ink);
+  --input-border-focus: var(--primitive-public-ink);
+  --public-section-dark: var(--primitive-public-ink);
+  background: var(--primitive-white);
+}
+
+.site-shell .site-header-tracking {
+  position: sticky;
+  z-index: 40;
+  top: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-primary) 8%, transparent);
+  backdrop-filter: none;
+}
+
+.site-shell .site-header-tracking .site-header-inner {
+  width: min(100% - 32px, var(--layout-max-width));
+  min-height: 68px;
+}
+
+.site-header-tracking .logo-copy strong,
+.tracking-footer .logo-copy strong {
+  color: var(--color-primary);
+}
+
+.site-header-tracking .logo-copy small,
+.tracking-footer .logo-copy small {
+  color: var(--color-muted-foreground);
+}
+
+/*
+ * Tracking lookup = the vilogix.co contact shell (same classes and tokens as ContactPage):
+ * dark intro pane + light form pane, border-strong frame, eyebrow + H2 form heading,
+ * `.field-label` / `.form-control`, `.contact-form-note`. Only the page wrapper and the
+ * one-field density are tracking-specific.
+ */
+.tracking-page {
+  display: grid;
+  min-height: calc(100dvh - 68px - 56px);
+  align-items: center;
+  background: var(--primitive-public-surface);
+  padding: clamp(2rem, 5vw, 4rem) var(--spacing-page-x);
+}
+
+.tracking-shell {
+  width: min(100%, 64rem);
+  margin-inline: auto;
+}
+
+.tracking-shell .contact-intro { padding: clamp(1.75rem, 4vw, 3rem); }
+.tracking-shell .contact-intro h1 { max-width: 12ch; font-size: clamp(2.25rem, 4.6vw, 3.5rem); }
+.tracking-shell .contact-intro > svg { margin-bottom: var(--space-5); }
+.tracking-shell .contact-form { padding: clamp(1.75rem, 4vw, 3rem); }
+.tracking-shell .contact-form .primary-action { justify-self: stretch; min-height: 3.25rem; letter-spacing: .035em; text-transform: uppercase; }
+.tracking-shell .contact-form .primary-action svg { width: 1rem; height: 1rem; }
+.tracking-shell .form-control { min-height: 3.25rem; margin-top: var(--space-2); letter-spacing: .02em; }
+.tracking-shell .contact-form-note { margin: 0; }
+.tracking-shell .tracking-field-error { margin: calc(var(--space-2) * -1) 0 0; font-size: .8125rem; }
+
+@media (min-width: 900px) {
+  .tracking-shell { grid-template-columns: minmax(0, .92fr) minmax(24rem, 1.08fr); }
+}
+
+/* Shown over the embed only when the carrier iframe fails to load in time. */
+.tracking-embed-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  padding: var(--space-6) var(--spacing-page-x, 1rem);
+  text-align: center;
+}
+.tracking-embed-fallback h2 { margin: 0; color: var(--color-primary); font-size: 1.25rem; letter-spacing: -.02em; }
+.tracking-embed-fallback p { margin: 0; max-width: 28rem; color: var(--color-muted-foreground); }
+.tracking-embed-fallback .primary-action svg { width: 1rem; }
+
+.tracking-footer {
+  display: flex;
+  width: 100%;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: var(--space-2) max(var(--spacing-page-x), calc((100vw - var(--content-width)) / 2));
+  color: var(--color-muted-foreground);
+  font-size: .75rem;
+  line-height: 1.4;
+}
+
+.tracking-footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.tracking-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-5);
+}
+
+.tracking-footer-links a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: .3em;
+}
+
+.tracking-footer-links a svg { width: .875rem; height: .875rem; }
+.tracking-footer-links a:hover { color: var(--color-action); }
+.tracking-footer-links a:focus-visible { outline: none; box-shadow: var(--focus-ring-shadow); }
+
+/* Language switch: two text links, 44px hit areas, active state by ink + red rule. */
+.tracking-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+.tracking-quote-cta {
+  min-height: 2.75rem;
+  padding-inline: var(--space-4);
+  font-size: .75rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* WhatsApp help for a specific shipment: icon-only, 44px target, embed pages only. */
+.tracking-help-icon {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--color-primary);
+}
+.tracking-help-icon svg { width: 1.25rem; height: 1.25rem; }
+.tracking-help-icon:hover { border-color: var(--color-primary); }
+.tracking-help-icon:focus-visible { outline: none; box-shadow: var(--focus-ring-shadow); }
+
+/* Mobile menu (toggle + panel). Hidden ≥720px, where actions are inline. */
+.tracking-menu-btn { display: none; }
+.tracking-menu { display: none !important; }
+
+.tracking-lang {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Footer copy of the switch is for phones only; the header one returns at ≥720px. */
+.tracking-lang--footer { display: none; }
+
+.tracking-lang a {
+  display: inline-flex;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted-foreground);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-decoration: none;
+}
+
+.tracking-lang a:hover { color: var(--color-primary); }
+
+.tracking-lang a.is-active {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--color-action);
+  text-decoration-thickness: 2px;
+  text-underline-offset: .45em;
+}
+
+.tracking-lang a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring-shadow);
+}
+
+.site-shell .site-header-tracking .site-header-inner {
+  display: flex;
+  align-items: center;
+}
+
+.tracking-invalid {
+  min-height: calc(100dvh - 4.5rem);
+  padding: var(--space-7) var(--public-mobile-gutter);
+}
+
+.tracking-invalid h1 { line-height: 1.12; text-wrap: balance; }
+.tracking-invalid > p:not(.eyebrow) { max-width: 28rem; line-height: 1.55; }
+
+.tracking-invalid-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3) var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.tracking-invalid-actions .primary-action,
+.tracking-invalid .tracking-invalid-actions .primary-action { margin-top: 0; }
+
+.tracking-invalid-actions .text-action { gap: var(--space-2); color: var(--color-primary); font-size: var(--font-size-xs); text-decoration: underline; text-underline-offset: .3em; }
+.tracking-invalid-actions .text-action svg { width: 1rem; height: 1rem; }
+
+.tracking-invalid > svg {
+  width: 3rem;
+  height: 3rem;
+  padding: .75rem;
+  border-radius: var(--radius-md);
+  background: var(--color-action);
+  color: var(--color-action-foreground);
+}
+
+.tadi-tracking-view,
+.vietan-tracking-view {
+  background: var(--primitive-public-surface);
+}
+
+@media (min-width: 640px) {
+  .site-shell .site-header-tracking .site-header-inner {
+    width: min(100% - 48px, var(--layout-max-width));
+  }
+
+  }
+
+@media (max-width: 719px) {
+  :root { --tracking-m-gutter: 1rem; }
+
+  .site-shell .site-header-tracking .site-header-inner { min-height: 60px; }
+
+  /* Ported from vilogix.co mobile-compact.css (contact): flush shell, 24/20 intro, 16px form rhythm. */
+  .tracking-page { min-height: calc(100dvh - 61px - 110px); align-items: start; padding: 0; background: var(--color-surface); }
+  /* Hairlines come only from header (bottom) and footer (top); the flush shell adds none. */
+  .tracking-shell { border: 0; box-shadow: none; }
+  .site-shell .site-header-tracking { box-shadow: none; }
+  .tracking-shell .contact-intro { padding: 1.5rem var(--tracking-m-gutter) 1.25rem; }
+  .tracking-shell .contact-intro > svg { display: none; }
+  .tracking-shell .contact-intro h1 { max-width: none; margin-top: .5rem; font-size: 1.875rem; line-height: 1.1; letter-spacing: -.035em; }
+  .tracking-shell .contact-intro > p:not(.eyebrow) { margin-top: .85rem; font-size: .9375rem; line-height: 1.55; }
+  .tracking-shell .contact-form { gap: 1rem; padding: 1.5rem var(--tracking-m-gutter) 1.75rem; }
+  .tracking-shell .contact-form-heading h2 { font-size: 1.5rem; }
+  .tracking-shell .contact-form-note { font-size: .75rem; line-height: 1.5; }
+
+  /* Header: one menu toggle replaces the inline actions; panel rows are 48px, hairline-divided. */
+  .tracking-header-actions { display: none; }
+  .tracking-menu-btn {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-left: auto;
+    align-items: center;
+    justify-content: center;
+    margin-right: -.625rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary);
+  }
+  .tracking-menu-btn svg { width: 1.375rem; height: 1.375rem; }
+  .tracking-menu-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-shadow); }
+  .tracking-menu:not([hidden]) {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: block !important;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 0 var(--tracking-m-gutter) var(--space-3);
+    box-shadow: 0 12px 24px -16px rgb(0 0 0 / .25);
+  }
+  .tracking-menu-row {
+    display: flex;
+    min-height: 3rem;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--color-primary);
+    font-size: .9375rem;
+    font-weight: 600;
+  }
+  .tracking-menu-row svg { width: 1.125rem; height: 1.125rem; color: var(--color-muted-foreground); }
+  .tracking-menu-row--lang .tracking-lang a { justify-content: flex-start; min-width: 0; padding-right: var(--space-5); }
+  .tracking-menu-cta { padding-top: var(--space-2); }
+  .tracking-menu-cta .tracking-quote-cta { display: flex; width: 100%; justify-content: center; }
+
+  /* Footer: row 1 = legal, row 2 = links (language lives in the menu on phones). */
+  .tracking-footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "legal" "links";
+    align-items: center;
+    gap: 0 var(--space-3);
+    min-height: 0;
+    padding: var(--space-2) var(--tracking-m-gutter);
+  }
+  .tracking-footer-legal { grid-area: legal; gap: 0 var(--space-2); }
+  .tracking-footer-links { grid-area: links; justify-content: space-between; border-top: 0; }
+  .tracking-footer-links a { min-height: 2.75rem; }
+  .tracking-lang--header, .tracking-lang--footer { display: none; }
+
+  .tracking-invalid { min-height: calc(100dvh - 61px - 132px); padding: var(--space-6) var(--tracking-m-gutter); }
+  .tracking-invalid h1 { font-size: 2rem; }
+  .tracking-invalid-actions { flex-direction: column; width: 100%; }
+  .tracking-invalid-actions .primary-action { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  }

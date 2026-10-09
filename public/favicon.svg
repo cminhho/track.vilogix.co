@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
   <title id="title">VI LOGIX</title>
-  <rect width="64" height="64" rx="10" fill="#14213d"/>
-  <path fill="#fffdf9" d="M8 15h9l10.5 29L38 15h9L33 51H22L8 15Z"/>
-  <path fill="#e31e24" d="M49 15h7v36h-7z"/>
+  <rect width="64" height="64" rx="14" fill="#14213d"/>
+  <path fill="#fffdf9" d="M10 14h12l10 27v11h-5.5L10 14Z"/>
+  <path fill="#e31e24" d="M42 14h12L37.5 52H32V41l10-27Z"/>
 </svg>

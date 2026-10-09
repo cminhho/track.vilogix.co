@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { AppRoutes } from '../App'
 import { HomePage } from './HomePage'
 import { NotFoundPage } from './NotFoundPage'
 import { TadiTrackingPage } from './TadiTrackingPage'
@@ -98,7 +99,7 @@ describe('lean tracking flow', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: /track shipment/i }))
 
-    expect(screen.getByRole('alert').textContent).toBe('Enter a valid tracking number.')
+    expect(screen.getByRole('alert').textContent).toBe('This tracking number is not valid. Check it and try again.')
     expect(document.querySelector('iframe')).toBeNull()
   })
 
@@ -109,7 +110,90 @@ describe('lean tracking flow', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: /track shipment/i }))
 
-    expect(screen.getByRole('alert').textContent).toBe('Enter a valid tracking number.')
+    expect(screen.getByRole('alert').textContent).toBe('This tracking number is not valid. Check it and try again.')
     expect(document.querySelector('iframe')).toBeNull()
+  })
+})
+
+describe('tracking locale', () => {
+  it('renders Vietnamese copy from ?lang=vi and keeps the language when opening a vendor page', () => {
+    renderTrackingRoutes('/?lang=vi')
+
+    expect(screen.getByRole('heading', { name: 'Theo dõi vận đơn.' })).toBeTruthy()
+    fireEvent.change(screen.getByRole('textbox', { name: /mã vận đơn/i }), { target: { value: 'VAE6172162' } })
+    fireEvent.click(screen.getByRole('button', { name: /theo dõi/i }))
+
+    expect(screen.getByTitle('Tracking details — 6172162')).toBeTruthy()
+  })
+
+  it('localizes validation feedback', () => {
+    renderTrackingRoutes('/?lang=vi')
+    fireEvent.click(screen.getByRole('button', { name: /theo dõi/i }))
+
+    expect(screen.getByRole('alert').textContent).toBe('Vui lòng nhập mã vận đơn.')
+  })
+
+  it('offers a WhatsApp support link only on the unavailable state', () => {
+    renderTrackingRoutes('/TDE/no')
+    const support = screen.getByRole('link', { name: /ask vi logix on whatsapp/i }) as HTMLAnchorElement
+    expect(support.href.startsWith('https://wa.me/')).toBe(true)
+    expect(support.rel).toContain('noopener')
+  })
+})
+
+describe('tracking footer', () => {
+  it('links to the main website and WhatsApp support without printing the phone number', () => {
+    render(<MemoryRouter initialEntries={['/']}><AppRoutes /></MemoryRouter>)
+
+    const site = screen.getByRole('link', { name: /go to the vi logix website/i }) as HTMLAnchorElement
+    expect(site.href).toBe('https://vilogix.co/?utm_source=track&utm_medium=footer&utm_campaign=tracking')
+
+    const help = screen.getByRole('link', { name: /need help\? whatsapp/i }) as HTMLAnchorElement
+    expect(help.href.startsWith('https://wa.me/')).toBe(true)
+    expect(help.rel).toContain('noopener')
+    expect(document.body.textContent).not.toMatch(/\d{10,}/)
+  })
+
+  it('does not render the footer on a vendor tracking page', () => {
+    render(<MemoryRouter initialEntries={['/VAE/6172162']}><AppRoutes /></MemoryRouter>)
+
+    expect(screen.queryByRole('contentinfo')).toBeNull()
+  })
+})
+
+describe('quote call to action', () => {
+  it('shows one tagged quote link in the header on the home page', () => {
+    render(<MemoryRouter initialEntries={['/']}><AppRoutes /></MemoryRouter>)
+
+    const cta = screen.getByRole('link', { name: /contact vi logix/i }) as HTMLAnchorElement
+    expect(cta.textContent).toBe('Contact us')
+    expect(cta.href).toBe('https://vilogix.co/contact?utm_source=track&utm_medium=header&utm_campaign=tracking&utm_content=lookup')
+    expect(screen.queryByRole('link', { name: /ask about this shipment/i })).toBeNull()
+    expect(screen.queryByRole('link', { name: /pricing|services|about/i })).toBeNull()
+  })
+
+  it('points Vietnamese visitors to the Vietnamese contact page', () => {
+    render(<MemoryRouter initialEntries={['/?lang=vi']}><AppRoutes /></MemoryRouter>)
+
+    const cta = screen.getByRole('link', { name: /liên hệ vi logix/i }) as HTMLAnchorElement
+    expect(cta.textContent).toBe('Liên hệ')
+    expect(cta.href).toBe('https://vilogix.co/vi/lien-he?utm_source=track&utm_medium=header&utm_campaign=tracking&utm_content=lookup')
+  })
+
+  it('keeps the quote link in the header of a vendor tracking page', () => {
+    render(<MemoryRouter initialEntries={['/VAE/6172162']}><AppRoutes /></MemoryRouter>)
+
+    const cta = screen.getByRole('link', { name: /contact vi logix/i }) as HTMLAnchorElement
+    expect(cta.href).toContain('utm_content=embed')
+    expect(screen.queryByRole('navigation', { name: /language/i })).toBeNull()
+  })
+
+  it('offers a WhatsApp help icon with the tracking number on a vendor page only', () => {
+    render(<MemoryRouter initialEntries={['/VAE/6172162']}><AppRoutes /></MemoryRouter>)
+
+    const help = screen.getByRole('link', { name: /ask about this shipment on whatsapp/i }) as HTMLAnchorElement
+    expect(help.href.startsWith('https://wa.me/')).toBe(true)
+    expect(decodeURIComponent(help.href)).toContain('6172162')
+    expect(help.rel).toContain('noopener')
   })
 })

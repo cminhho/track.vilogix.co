@@ -1,11 +1,16 @@
 import { ArrowRight, PackageSearch } from 'lucide-react'
 import { type FormEvent, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { PageMeta } from '../components/PageMeta'
 import { parseTrackingInput } from '../config/trackingEmbeds'
+import { LEAN_TRACKING_COPY } from '../config/trackingCopy'
+import { getTrackingLocale, withTrackingLang } from '../lib/trackingLocale'
 
 export function HomePage() {
   const navigate = useNavigate()
+  const { search } = useLocation()
+  const locale = getTrackingLocale(search)
+  const copy = LEAN_TRACKING_COPY[locale].home
   const inputRef = useRef<HTMLInputElement>(null)
   const [trackingNumber, setTrackingNumber] = useState('')
   const [error, setError] = useState('')
@@ -15,45 +20,52 @@ export function HomePage() {
     const normalized = trackingNumber.trim().toUpperCase()
 
     if (!normalized) {
-      setError('Enter a tracking number.')
+      setError(copy.errorEmpty)
       inputRef.current?.focus()
       return
     }
 
     const parsed = parseTrackingInput(normalized)
     if (!parsed) {
-      setError('Enter a valid tracking number.')
+      setError(copy.errorInvalid)
       inputRef.current?.focus()
       return
     }
 
-    navigate(`/${parsed.vendor}/${encodeURIComponent(parsed.trackingNumber)}`)
+    navigate(withTrackingLang(`/${parsed.vendor}/${encodeURIComponent(parsed.trackingNumber)}`, locale))
   }
 
   return (
     <>
       <PageMeta
-        title="Track Your Shipment | VI LOGIX"
-        description="Enter your tracking number to view the latest shipment updates."
+        title={copy.pageTitle}
+        description={copy.pageDescription}
         noIndex
         path="/"
-        lang="en"
+        lang={locale}
       />
 
-      <section className="lean-tracking-home" aria-labelledby="tracking-page-title">
-        <div className="lean-tracking-panel">
-          <div className="lean-tracking-icon" aria-hidden="true"><PackageSearch /></div>
-          <p className="eyebrow">VI LOGIX · Shipment tracking</p>
-          <h1 id="tracking-page-title">Track your shipment.</h1>
-          <p className="lean-tracking-intro">Enter the tracking number from your shipment confirmation.</p>
+      <section className="tracking-page" aria-labelledby="tracking-page-title">
+        <div className="contact-shell tracking-shell">
+          <div className="contact-intro">
+            <PackageSearch size={30} strokeWidth={1.7} aria-hidden="true" />
+            <p className="eyebrow">{copy.eyebrow}</p>
+            <h1 id="tracking-page-title">{copy.title}</h1>
+            <p>{copy.intro}</p>
+          </div>
 
-          <form className="lean-tracking-form" onSubmit={handleSubmit} noValidate>
-            <label htmlFor="tracking-number">Tracking number</label>
-            <div className={`lean-tracking-input-row${error ? ' has-error' : ''}`}>
+          <form className="contact-form" role="search" aria-labelledby="tracking-form-title" onSubmit={handleSubmit} noValidate>
+            <div className="contact-form-heading">
+              <p className="eyebrow">{copy.formEyebrow}</p>
+              <h2 id="tracking-form-title">{copy.formTitle}</h2>
+            </div>
+            <label className="field-label" htmlFor="tracking-number">
+              {copy.label}
               <input
                 ref={inputRef}
                 id="tracking-number"
                 name="tracking-number"
+                className="form-control"
                 value={trackingNumber}
                 onChange={(event) => {
                   setTrackingNumber(event.target.value.toUpperCase())
@@ -65,11 +77,12 @@ export function HomePage() {
                 aria-invalid={Boolean(error)}
                 aria-describedby={error ? 'tracking-number-error' : undefined}
               />
-              <button className="primary-action" type="submit">
-                Track shipment <ArrowRight aria-hidden="true" />
-              </button>
-            </div>
+            </label>
             {error && <p id="tracking-number-error" className="tracking-field-error" role="alert">{error}</p>}
+            <button className="primary-action" type="submit">
+              {copy.submit} <ArrowRight aria-hidden="true" />
+            </button>
+            <p className="contact-form-note">{copy.note}</p>
           </form>
         </div>
       </section>

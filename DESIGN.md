@@ -2,17 +2,25 @@
 
 ## Tracking subdomain intent
 
-- Homepage của `track.vilogx.co` là một task-first utility page: tra cứu vận đơn phải là hành động nổi bật nhất trong viewport đầu tiên.
-- Public tracking chỉ hiển thị mã, trạng thái, origin/destination khái quát, thời điểm và operational events đã làm sạch. Không hiển thị PII, địa chỉ chi tiết, cước hoặc actor nội bộ.
-- Share link dùng query `?tracking=` để customer mở và tự tra cứu; canonical, metadata và structured data vẫn phải trỏ về `/` và không chứa mã vận đơn. Empty, loading, found, not-found và unavailable states phải có thông báo và recovery action rõ ràng.
-- Tracking hierarchy là lookup → current status + ETA → route/progress → customs status → optional notification opt-in → latest event → earlier events → references → secure documents. ETA chỉ render từ record/API và luôn được mô tả là estimate; browser không tự tính từ destination hoặc rate matrix.
-- International progress phải có customs clearance giữa international transit và out for delivery. Clearance state dùng pending/in progress/cleared/action required; action required phải kèm instruction bằng text.
-- Notification và document actions là capability-gated. Không render notification channel không được backend khai báo; document URL không được nằm trong public lookup payload và chỉ được trả sau email OTP. Demo interaction phải được gắn nhãn và không được giả thành production success.
-- Root tracking UI hỗ trợ `lang=vi|en`; query tracking và locale được giữ khi share. Locale đổi customer-facing tracking copy, status, dates, errors, root header/footer và accessibility labels nhưng không thay canonical URL.
-- Carrier name, reference và outbound tracking URL chỉ hiển thị khi record trả về đủ dữ liệu. Link phải được ghi rõ là external shipping-partner reference, không được suy đoán quan hệ carrier.
-- Tracking page phải theo task hierarchy: lookup → current status → route/progress → latest event → earlier events → carrier/support. Tracking number là reference, không phải heading quan trọng hơn current status.
-- Loading, found và no-result feedback dùng status semantics để screen reader nhận được thay đổi mà không tự động chuyển keyboard focus. Earlier events có thể disclosure theo nhu cầu để giữ result scan-friendly.
-- Public tracking data phải đi qua `TrackingDataSource` độc lập; không đọc trực tiếp dữ liệu portal hoặc tạo thêm quyền truy cập vào `/app/*`.
+`track.vilogx.co` is a task-first utility, not a marketing page. It follows the canonical vilogix.co public design system (Be Vietnam Pro, ink + vermilion on warm paper, hairline surfaces, 4px radius, uppercase vermilion actions) at a deliberately small scope. Detailed rules: `docs/design-system/tracking.md`.
+
+**Current surface (source of truth: `README.md`, `TARGET.md`, `HomePage.test.tsx`)**
+
+- `/` — the vilogix.co **contact shell** (same `contact-shell / contact-intro / contact-form / field-label / form-control / contact-form-note` classes and tokens as `ContactPage`): dark intro pane (eyebrow, H1, one sentence) + light form pane (eyebrow, H2, one labelled field, one primary action, one note). No placeholder and no vendor-specific helper copy; validation text is connected to the field (`aria-describedby`, `role="alert"`).
+- **Semantic outline of `/`:** `header` (brand, `nav` language) → `main` → `section[aria-labelledby=H1]` → `h1` Track your shipment. → `form[role=search][aria-labelledby=H2]` → `h2` Enter your tracking number. → `footer`. One H1, one H2, no skipped levels; document title `Track Your Shipment | VI LOGIX`.
+- `/TDE/:trackingNumber`, `/VAE/:trackingNumber` — full-width allowlisted carrier embed. The page keeps a visually hidden `Shipment tracking` H1 and no extra chrome (no language switch, no footer, no back link).
+- Unavailable (valid route, bad number) and 404 share one state layout: icon, eyebrow, H1, one sentence, a primary recovery action back to `/`. The unavailable state also offers a secondary WhatsApp support link with a prefilled message.
+- Header (every route): logo, language switch (not on embeds) and **one** `Contact us` action (`.header-cta`, vermilion, 44px) to the main-site contact form (`/contact`, `/vi/lien-he`) with `utm_source=track&utm_medium=header&utm_campaign=tracking&utm_content=lookup|embed`. Embeds also show a WhatsApp icon prefilled with the tracking number. Below 720px these actions collapse into one menu toggle (panel rows: WhatsApp, website, language, `Contact us`).
+- Footer (every route except the vendor embeds): legal line, `VI LOGIX website` link (`utm_medium=footer`) and `Need help? WhatsApp`, plus the language switch on phones.
+- Everything is `noindex`. Unknown vendors and malformed numbers never contact a carrier.
+
+**Out of scope (do not reintroduce without a confirmed tracking API):** customs clearance steps, ETA, route/progress, activity history, notification opt-in, document access, quotes, marketing sections, recipient PII. The earlier portal-era copy in `src/lib/trackingLocale.ts` (`TRACKING_COPY`) is legacy and must not drive the public UI.
+
+**Language.** `?lang=vi|en` (default `en`). Copy for the lean surface lives in `src/config/trackingCopy.ts`; the header switch (EN · VI, 44px targets) is shown on `/`, unavailable and 404 only, and the choice is carried through `withTrackingLang()` when navigating. Canonical URL, metadata and the embed pages stay on the English default.
+
+**Layout and density (see `docs/design-system/tracking.md`).** Tracking must look like a page of vilogix.co: do not invent tracking-only panels, rules or radii. Mobile uses the same compact contact rules as `vilogix.co/src/styles/mobile-compact.css` (24/20px intro, 16px form rhythm, 30px H1, flush shell). The page must fit one mobile viewport (375×812) without scrolling; 44px minimum touch targets; one-line footer.
+
+**Data rules (unchanged).** Tracking data goes only through allowlisted vendor adapters in `src/config/trackingEmbeds.ts`; share links never put the tracking number in metadata or canonical URLs.
 
 ## Context and goals
 
