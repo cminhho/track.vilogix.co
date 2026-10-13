@@ -1834,7 +1834,8 @@ summary:focus-visible, a:focus-visible, button:focus-visible {
 
 @media (max-width: 719px) {
   .tadi-tracking-view { --tadi-header-crop: 8.75rem; --tadi-frame-height: 92rem; }
-  .tadi-tracking-frame { pointer-events: none; }
+  /* Keep the TADI frame interactive so package references can open their detail view on touch devices. */
+  .tadi-tracking-frame { touch-action: pan-y; }
   /* Thin top guard: hides any sub-pixel leak of the vendor header during fast scroll/bounce. */
   .tadi-tracking-frame-shell::before,
   .vietan-tracking-frame-shell::before {
